@@ -1,5 +1,6 @@
 function TodoListComponent(userId) {
-  const todos = window.cachedTodos?.filter(t => t.userId === userId) || [];
+  const allTodos = [...(window.customTodos || []), ...window.cachedTodos || []];
+  const todos = allTodos.filter(t => t.userId === userId);
   const filtered = todos.filter(t =>
     !window.searchQuery || t.title.toLowerCase().includes(window.searchQuery)
   );
