@@ -6,14 +6,25 @@ function Breadcrumbs(currentHash) {
     return { name: route?.name || part, hash };
   });
 
+  const backButton = items.length > 1 ? createElement('button', {
+    className: 'btn-nav',
+    onclick: () => {
+      const parentHash = items[items.length - 2]?.hash || '#users';
+      navigate(parentHash);
+    }
+  }, 'Назад') : null;
+
   return createElement('nav', { className: 'breadcrumbs' },
-    ...items.map((item, i) =>
-      createElement('span', {},
-        i > 0 ? ' > ' : '',
-        createElement('a', { href: item.hash, onclick: (e) => {
-          e.preventDefault();
-          navigate(item.hash);
-        }}, item.name)
+    createElement('div', {},
+      backButton,
+      ...items.map((item, i) =>
+        createElement('span', {},
+          i > 0 ? ' > ' : '',
+          createElement('a', {
+            href: item.hash,
+            onclick: e => { e.preventDefault(); navigate(item.hash); }
+          }, item.name)
+        )
       )
     )
   );

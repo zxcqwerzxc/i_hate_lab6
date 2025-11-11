@@ -1,57 +1,64 @@
-let currentUserId = null;
-let currentPostId = null;
 window.searchQuery = '';
 
 function renderSearch() {
-  const searchInput = createElement('input', {
+  const input = createElement('input', {
     type: 'text',
     placeholder: 'Поиск...',
     className: 'search-input',
-    oninput: debounce(handleSearch, 400)
+    value: window.searchQuery,
+    oninput: debounce(handleSearch, 300)
   });
-  return createElement('div', { className: 'search-container' }, searchInput);
+  input.addEventListener('search', () => {
+    window.searchQuery = '';
+    window.renderApp();
+  });
+  return createElement('div', { className: 'search-container' }, input);
 }
 
 function handleSearch(e) {
-  window.searchQuery = e.target.value.toLowerCase();
-  renderApp();
+  window.searchQuery = e.target.value.trim().toLowerCase();
+  window.renderApp();
+}
+
+function getIdFromHash(hash, level) {
+  const parts = hash.replace(/^#/, '').split('#');
+  return parts[level + 1] ? parseInt(parts[level + 1], 10) : null;
+}
+
+function navigate(baseHash, id) {
+  let fullHash = baseHash;
+  if (id !== undefined) {
+    fullHash = `${baseHash}#${id}`;
+  }
+  window.location.hash = fullHash;
 }
 
 function renderApp() {
   const hash = window.location.hash || '#users';
   const app = document.getElementById('app');
+  if (!app) return;
   app.innerHTML = '';
 
-  const breadcrumbs = Breadcrumbs(hash);
-  const search = renderSearch();
-  app.appendChild(breadcrumbs);
-  app.appendChild(search);
+  app.appendChild(Breadcrumbs(hash));
+  app.appendChild(renderSearch());
 
-  if (hash.startsWith('#users#posts#comments')) {
-    const postId = getIdFromHash(hash, 2);
-    app.appendChild(CommentListComponent(postId));
-  } else if (hash.startsWith('#users#posts')) {
-    const userId = getIdFromHash(hash, 1);
-    app.appendChild(PostListComponent(userId));
-  } else if (hash.startsWith('#users#todos')) {
-    const userId = getIdFromHash(hash, 1);
-    app.appendChild(TodoListComponent(userId));
-  } else if (hash === '#users') {
-    app.appendChild(UserListComponent());
+  try {
+    if (hash.includes('#comments')) {
+      const postId = getIdFromHash(hash, 2);
+      if (postId) app.appendChild(CommentListComponent(postId));
+    } else if (hash.includes('#posts')) {
+      const userId = getIdFromHash(hash, 1);
+      if (userId) app.appendChild(PostListComponent(userId));
+    } else if (hash.includes('#todos')) {
+      const userId = getIdFromHash(hash, 1);
+      if (userId) app.appendChild(TodoListComponent(userId));
+    } else if (hash === '#users') {
+      app.appendChild(UserListComponent());
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
 
-function getIdFromHash(hash, level) {
-  const parts = hash.split('#');
-  return parts[level + 1] ? parseInt(parts[level + 1]) : null;
-}
-
-function navigate(hash, id) {
-  if (id) {
-    const parts = hash.split('#');
-    parts.push(id);
-    window.location.hash = parts.join('#');
-  } else {
-    window.location.hash = hash;
-  }
-}
+window.renderApp = renderApp;
+window.navigate = navigate;

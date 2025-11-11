@@ -2,15 +2,19 @@ window.cachedUsers = [];
 window.cachedTodos = [];
 window.cachedPosts = [];
 window.cachedComments = [];
-window.customTodos = [];
 
 async function loadInitialData() {
-  window.cachedUsers = await api.getUsers();
-  window.cachedTodos = await api.getTodos();
-  window.cachedPosts = await api.getPosts();
-  window.cachedComments = await api.getComments();
-  renderApp();
+  try {
+    window.cachedUsers = await api.getUsers();
+    window.cachedTodos = await api.getTodos();
+    window.cachedPosts = await api.getPosts();
+    window.cachedComments = await api.getComments();
+  } catch (e) {
+    console.error('API load error:', e);
+  } finally {
+    window.renderApp();
+  }
 }
 
-window.addEventListener('hashchange', renderApp);
+window.addEventListener('hashchange', () => window.renderApp());
 window.addEventListener('load', loadInitialData);
