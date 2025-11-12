@@ -29,7 +29,6 @@ function showAddCommentForm(postId) {
 }
 
 function CommentListComponent(postId) {
-    // Объединяем кэшированные (API) и пользовательские комментарии
     const allComments = [...storage.getComments(), ...(window.cachedComments || [])];
     const comments = allComments.filter(c => c.postId === postId);
 
@@ -41,7 +40,6 @@ function CommentListComponent(postId) {
 
     return createElement('div', { className: 'comment-list' },
         createElement('h2', {}, 'Комментарии'),
-        // Кнопка добавления комментария
         createElement('button', { className: 'btn-add', onclick: () => showAddCommentForm(postId) }, 'Добавить комментарий'),
 
         ...filtered.map(comment => createElement('div', { className: 'comment-card' },
@@ -49,7 +47,6 @@ function CommentListComponent(postId) {
             createElement('p', {}, comment.body),
             createElement('small', {style: 'display: block;'}, `От: ${comment.email || 'Пользовательский комментарий'}`), 
             
-            // Кнопка удаления: только для пользовательских комментариев (id > 500)
             comment.id > 500 && createElement('button', {
                 className: 'btn-nav btn-delete',
                 style: 'margin-left: 0; margin-top: 10px;', 

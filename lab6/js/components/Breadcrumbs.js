@@ -1,18 +1,15 @@
 function Breadcrumbs(currentHash) {
-    // 1. Нормализуем хэш и разбиваем на части
     const parts = currentHash.replace(/^#/, '').split('#').filter(p => p);
-    
-    // 2. Создаем элементы хлебных крошек
+
     const items = parts.map((part, i) => {
         const hash = '#' + parts.slice(0, i + 1).join('#');
         let name = part;
-        
-        // Поиск по статическим маршрутам
+
         const route = ROUTES.find(r => r.hash === hash);
         if (route) {
             name = route.name;
         } 
-        // Если это ID пользователя (i = 1)
+
         else if (i === 1) { 
             const allUsers = [...storage.getUsers(), ...(window.cachedUsers || [])];
             const user = allUsers.find(u => u.id === parseInt(part));
@@ -22,7 +19,6 @@ function Breadcrumbs(currentHash) {
                 name = `Пользователь #${part}`;
             }
         } 
-        // Если это ID поста (i = 3)
         else if (i === 3) { 
             name = `Пост #${part}`;
         }
@@ -30,18 +26,16 @@ function Breadcrumbs(currentHash) {
         return { name: name, hash };
     });
 
-    // 3. Кнопка "Назад"
     const backButton = items.length > 1 ? createElement('button', {
         className: 'btn-nav',
         onclick: () => {
             // Вычисляем родительский хэш, исключая последний элемент
             const parentParts = parts.slice(0, parts.length - 1);
             const parentHash = '#' + parentParts.join('#') || '#users';
-            navigate(parentHash); // Используем глобальную navigate()
+            navigate(parentHash);
         }
     }, 'Назад') : null;
 
-    // 4. Рендеринг
     return createElement('nav', { className: 'breadcrumbs' },
         createElement('div', {},
             backButton,

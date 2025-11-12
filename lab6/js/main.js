@@ -17,6 +17,5 @@ async function loadInitialData() {
   }
 }
 
-// КРИТИЧНО: Привязываем обработчики событий
 window.addEventListener('hashchange', () => window.renderApp());
 window.addEventListener('load', loadInitialData);

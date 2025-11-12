@@ -1,5 +1,5 @@
 const storage = {
-    // === Users ===
+
     getUsers() { return JSON.parse(localStorage.getItem('customUsers') || '[]'); },
     saveUsers(users) { localStorage.setItem('customUsers', JSON.stringify(users)); },
     addUser(user) {
@@ -17,7 +17,6 @@ const storage = {
         this.saveComments(this.getComments().filter(c => !postsToDelete.includes(c.postId)));
     },
 
-    // === Todos ===
     getTodos() { return JSON.parse(localStorage.getItem('customTodos') || '[]'); },
     saveTodos(todos) { localStorage.setItem('customTodos', JSON.stringify(todos)); },
     addTodo(todo) {
@@ -36,7 +35,7 @@ const storage = {
         }
     },
 
-    // === Posts ===
+
     getPosts() { return JSON.parse(localStorage.getItem('customPosts') || '[]'); },
     savePosts(posts) { localStorage.setItem('customPosts', JSON.stringify(posts)); },
     addPost(post) {
@@ -47,7 +46,7 @@ const storage = {
         return post;
     },
     
-    // === Comments ===
+
     getComments() { return JSON.parse(localStorage.getItem('customComments') || '[]'); },
     saveComments(comments) { localStorage.setItem('customComments', JSON.stringify(comments)); },
     addComment(comment) {

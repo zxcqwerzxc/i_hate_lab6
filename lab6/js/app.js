@@ -1,6 +1,5 @@
 window.searchQuery = '';
 
-// ПОИСК
 function renderSearch() {
   const input = createElement('input', {
     type: 'text',
@@ -23,7 +22,6 @@ function handleSearch(e) {
   window.renderApp();
 }
 
-// НАВИГАЦИЯ
 function getIdFromHash(hash, level) {
   const parts = hash.replace(/^#/, '').split('#');
   return parts[level + 1] ? parseInt(parts[level + 1], 10) : null;
@@ -34,13 +32,13 @@ function navigate(baseHash, id) {
   if (id !== undefined) {
     hash = `${baseHash}#${id}`;
   }
-  // ИСПРАВЛЕНИЕ: Гарантируем # в начале хэша
+
   window.location.hash = hash.startsWith('#') ? hash : `#${hash}`;
 }
 
-// РЕНДЕР
+
 function renderApp() {
-  // ИСПРАВЛЕНИЕ: Нормализация хэша
+
   const hash = (window.location.hash || '#users').replace(/^#+/, '#'); 
   const app = document.getElementById('app');
   if (!app) return;
@@ -67,6 +65,5 @@ function renderApp() {
   }
 }
 
-// ГЛОБАЛЬНЫЕ ФУНКЦИИ
 window.renderApp = renderApp;
 window.navigate = navigate;

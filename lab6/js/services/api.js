@@ -1,6 +1,5 @@
 window.searchQuery = '';
 
-// ПОИСК
 function renderSearch() {
   const input = createElement('input', {
     type: 'text',
@@ -25,7 +24,6 @@ function handleSearch(e) {
   window.renderApp();
 }
 
-// НАВИГАЦИЯ
 function getIdFromHash(hash, level) {
   const parts = hash.replace(/^#/, '').split('#');
   return parts[level + 1] ? parseInt(parts[level + 1], 10) : null;
@@ -40,7 +38,6 @@ function navigate(baseHash, id) {
   window.location.hash = hash.startsWith('#') ? hash : `#${hash}`;
 }
 
-// РЕНДЕР
 function renderApp() {
     const hash = (window.location.hash || '#users').replace(/^#+/, '#'); 
     const app = document.getElementById('app');
