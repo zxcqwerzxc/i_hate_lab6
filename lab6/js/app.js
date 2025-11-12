@@ -1,16 +1,19 @@
 window.searchQuery = '';
 
+// ПОИСК
 function renderSearch() {
   const input = createElement('input', {
     type: 'text',
     placeholder: 'Поиск...',
     className: 'search-input',
     value: window.searchQuery,
-    oninput: debounce(handleSearch, 300)
+    oninput: debounce(handleSearch, 300) 
   });
   input.addEventListener('search', () => {
-    window.searchQuery = '';
-    window.renderApp();
+    if (!input.value) { 
+      window.searchQuery = '';
+      window.renderApp();
+    }
   });
   return createElement('div', { className: 'search-container' }, input);
 }
@@ -20,21 +23,25 @@ function handleSearch(e) {
   window.renderApp();
 }
 
+// НАВИГАЦИЯ
 function getIdFromHash(hash, level) {
   const parts = hash.replace(/^#/, '').split('#');
   return parts[level + 1] ? parseInt(parts[level + 1], 10) : null;
 }
 
 function navigate(baseHash, id) {
-  let fullHash = baseHash;
+  let hash = baseHash;
   if (id !== undefined) {
-    fullHash = `${baseHash}#${id}`;
+    hash = `${baseHash}#${id}`;
   }
-  window.location.hash = fullHash;
+  // ИСПРАВЛЕНИЕ: Гарантируем # в начале хэша
+  window.location.hash = hash.startsWith('#') ? hash : `#${hash}`;
 }
 
+// РЕНДЕР
 function renderApp() {
-  const hash = window.location.hash || '#users';
+  // ИСПРАВЛЕНИЕ: Нормализация хэша
+  const hash = (window.location.hash || '#users').replace(/^#+/, '#'); 
   const app = document.getElementById('app');
   if (!app) return;
   app.innerHTML = '';
@@ -56,9 +63,10 @@ function renderApp() {
       app.appendChild(UserListComponent());
     }
   } catch (e) {
-    console.error(e);
+    console.error('Render error:', e);
   }
 }
 
+// ГЛОБАЛЬНЫЕ ФУНКЦИИ
 window.renderApp = renderApp;
 window.navigate = navigate;

@@ -13,7 +13,6 @@ const storage = {
         this.saveUsers(this.getUsers().filter(u => u.id !== id));
         this.saveTodos(this.getTodos().filter(t => t.userId !== id));
         this.savePosts(this.getPosts().filter(p => p.userId !== id));
-        // Удаление комментариев, связанных с постами пользователя (упрощенно)
         const postsToDelete = this.getPosts().filter(p => p.userId === id).map(p => p.id);
         this.saveComments(this.getComments().filter(c => !postsToDelete.includes(c.postId)));
     },
@@ -48,7 +47,7 @@ const storage = {
         return post;
     },
     
-    // === Comments (NEW LOGIC) ===
+    // === Comments ===
     getComments() { return JSON.parse(localStorage.getItem('customComments') || '[]'); },
     saveComments(comments) { localStorage.setItem('customComments', JSON.stringify(comments)); },
     addComment(comment) {

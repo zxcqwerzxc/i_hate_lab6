@@ -1,31 +1,59 @@
 function Breadcrumbs(currentHash) {
-  const parts = currentHash.replace(/^#/, '').split('#');
-  const items = parts.map((part, i) => {
-    const hash = '#' + parts.slice(0, i + 1).join('#');
-    const route = ROUTES.find(r => r.hash === hash);
-    return { name: route?.name || part, hash };
-  });
+    // 1. Нормализуем хэш и разбиваем на части
+    const parts = currentHash.replace(/^#/, '').split('#').filter(p => p);
+    
+    // 2. Создаем элементы хлебных крошек
+    const items = parts.map((part, i) => {
+        const hash = '#' + parts.slice(0, i + 1).join('#');
+        let name = part;
+        
+        // Поиск по статическим маршрутам
+        const route = ROUTES.find(r => r.hash === hash);
+        if (route) {
+            name = route.name;
+        } 
+        // Если это ID пользователя (i = 1)
+        else if (i === 1) { 
+            const allUsers = [...storage.getUsers(), ...(window.cachedUsers || [])];
+            const user = allUsers.find(u => u.id === parseInt(part));
+            if (user) {
+                name = user.name;
+            } else {
+                name = `Пользователь #${part}`;
+            }
+        } 
+        // Если это ID поста (i = 3)
+        else if (i === 3) { 
+            name = `Пост #${part}`;
+        }
 
-  const backButton = items.length > 1 ? createElement('button', {
-    className: 'btn-nav',
-    onclick: () => {
-      const parentHash = items[items.length - 2]?.hash || '#users';
-      navigate(parentHash);
-    }
-  }, 'Назад') : null;
+        return { name: name, hash };
+    });
 
-  return createElement('nav', { className: 'breadcrumbs' },
-    createElement('div', {},
-      backButton,
-      ...items.map((item, i) =>
-        createElement('span', {},
-          i > 0 ? ' > ' : '',
-          createElement('a', {
-            href: item.hash,
-            onclick: e => { e.preventDefault(); navigate(item.hash); }
-          }, item.name)
+    // 3. Кнопка "Назад"
+    const backButton = items.length > 1 ? createElement('button', {
+        className: 'btn-nav',
+        onclick: () => {
+            // Вычисляем родительский хэш, исключая последний элемент
+            const parentParts = parts.slice(0, parts.length - 1);
+            const parentHash = '#' + parentParts.join('#') || '#users';
+            navigate(parentHash); // Используем глобальную navigate()
+        }
+    }, 'Назад') : null;
+
+    // 4. Рендеринг
+    return createElement('nav', { className: 'breadcrumbs' },
+        createElement('div', {},
+            backButton,
+            ...items.map((item, i) =>
+                createElement('span', {},
+                    i > 0 ? ' > ' : '',
+                    createElement('a', {
+                        href: item.hash,
+                        onclick: e => { e.preventDefault(); navigate(item.hash); }
+                    }, item.name)
+                )
+            )
         )
-      )
-    )
-  );
+    );
 }
