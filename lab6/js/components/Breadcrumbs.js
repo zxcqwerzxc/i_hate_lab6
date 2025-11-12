@@ -29,7 +29,7 @@ function Breadcrumbs(currentHash) {
     const backButton = items.length > 1 ? createElement('button', {
         className: 'btn-nav',
         onclick: () => {
-            // Вычисляем родительский хэш, исключая последний элемент
+
             const parentParts = parts.slice(0, parts.length - 1);
             const parentHash = '#' + parentParts.join('#') || '#users';
             navigate(parentHash);
